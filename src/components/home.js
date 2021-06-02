@@ -2,17 +2,33 @@ import { useEffect, useState, useRef } from "react";
 import Image from  "../components/image";
 
 export default function Home() {
-    const [photo, set_photoURL] = useState()
-    const [split, _set_split] = useState(0.5)
-    const max = 700
-    const min = 200 
+    const [photoURL, set_photoURL] = useState();
+    const [split, _set_split] = useState(0.5);
+    const [height, _set_height] = useState("");
+    const [width, _set_width] = useState("");
+    let [count, set_count] = useState(0);
 
-    // Split ref
+    // Refs
     const splitRef = useRef(split);
+    const heightRef = useRef(height);
+    const widthRef = useRef(width);
 
+    // Update split ref 
     const set_split = data => {
-        splitRef.current = data; // keep updated
+        splitRef.current = data; 
         _set_split(data);
+    };
+
+    // Update height ref 
+    const set_height = data => {
+        heightRef.current = data; 
+        _set_height(data);
+    };
+
+    // Update width ref 
+    const set_width = data => {
+        widthRef.current = data; 
+        _set_width(data);
     };
 
     useEffect(() => {
@@ -31,14 +47,38 @@ export default function Home() {
 
     // Function to get a random photo
     const get_photo = () => {
+        const max = 700
+        const min = 200 
+        const height = heightRef.current
+        const width = widthRef.current
+
+        // Check if height and with (if specified by user) is between 100 and 1000
+        if (width && height) {
+            if ((width < 100 || width > 1000) || (height < 100 || height > 1000)) {
+                alert("Width and Height must be between 100 and 1000 pixels.")
+
+                set_height("");
+                set_width("");
+            }
+        }
 
         // Get a random num 
         const rand_num = Math.random()
 
-        if (rand_num > splitRef.current)
+        if (rand_num > splitRef.current) {
+            if (height && width) {
+                return `https://placekitten.com/${width}/${height}`;
+            }
             return `https://placekitten.com/${Math.round(Math.random() * (max - min) + min)}/${Math.round(Math.random() * (max - min) + min)}`
-        else
-            return `https://source.unsplash.com/random/${Math.round(Math.random() * (max - min) + min)}x${Math.round(Math.random() * (max - min) + min)}`;
+        }
+        else {
+            set_count(count++)
+
+            if (height && width) {
+                return `https://source.unsplash.com/random/${width}x${height}?${count}`;
+            }
+            return `https://source.unsplash.com/random?${count}`;
+        }
     }
 
     // Event listener to refresh the photo if the user clicks on the 'up' arrow key
@@ -50,19 +90,48 @@ export default function Home() {
         }
     };
 
-    // Handle slider change
-    const changeSlider = (e) => {
-        set_split((e.target.value)/100)
-    }
-
     return (
         <div>
-            <Image image={photo} />
+            <Image image={photoURL} />
+            {photoURL}
             
             <div className="slider">
-                <p>Place Kitten: {Math.round(100-split*100)}</p>
-                <input type="range" onChange={changeSlider} value={split*100} min="0" max="100" />
-                <p>Unsplash: {Math.round(split*100)}</p>
+                <h2>Change Split</h2>
+                <p>Place Kitten: {Math.round(100-split*100)}%</p>
+                <input 
+                    type="range" 
+                    onChange={(e) => set_split((e.target.value)/100)} 
+                    value={split*100} 
+                    min="0" 
+                    max="100" />
+                <p>Unsplash: {Math.round(split*100)}%</p>
+            </div>
+
+            <div className="change_size">
+                <h2>Change Size</h2>
+                <label>
+                    Height (px):
+                    <input 
+                        type="number" 
+                        name="height" 
+                        placeholder="Enter a height" 
+                        value={height} 
+                        min="100"
+                        max="1000"
+                        onChange={(e) => set_height(e.target.value)} />
+                </label>
+
+                <label>
+                    Width (px):
+                    <input 
+                        type="number" 
+                        name="width" 
+                        placeholder="Enter a width" 
+                        value={width} 
+                        min="100"
+                        max="1000"
+                        onChange={(e) => set_width(e.target.value)} />
+                </label>
             </div>
         </div>
     )
