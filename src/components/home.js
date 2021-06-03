@@ -6,12 +6,14 @@ export default function Home() {
     const [split, _set_split] = useState(0.5);
     const [height, _set_height] = useState("");
     const [width, _set_width] = useState("");
+    const [startY, _set_startY] = useState();
     let [count, set_count] = useState(0);
 
     // Refs
     const splitRef = useRef(split);
     const heightRef = useRef(height);
     const widthRef = useRef(width);
+    const startYRef = useRef(startY);
 
     // Update split ref 
     const set_split = data => {
@@ -31,12 +33,22 @@ export default function Home() {
         _set_width(data);
     };
 
+    // Update startY ref
+    const set_startY = data => {
+        startYRef.current = data;
+        _set_startY(data);
+    }
+
     useEffect(() => {
         // Get a random photo and store the URL in a useState variable
         set_photoURL(get_photo());
 
         // Add event listener to listen when the user clicks a key on the keyboard
         window.addEventListener('keydown', handleKeyDown);
+
+        // Add mouse event listeners (for swiping functionality)
+        window.addEventListener('mousedown', handleMouseDown)
+        window.addEventListener('mouseup', handleMouseUp )
 
         // Remove listener
         return () => {
@@ -81,7 +93,7 @@ export default function Home() {
         }
     }
 
-    // Event listener to refresh the photo if the user clicks on the 'up' arrow key
+    // Event listener for 'up' arrow key
     const handleKeyDown = (event) => {
         if (event.keyCode === 38) {
 
@@ -90,10 +102,23 @@ export default function Home() {
         }
     };
 
+    // Event listener for mouse down key
+    const handleMouseDown = (event) => {
+        set_startY(event.clientY)
+    }
+
+    // Event listener for mouse up key
+    const handleMouseUp = (event) => {
+        if (event.clientY < startYRef.current) {
+            
+            // Get a random photo
+            set_photoURL(get_photo());
+        }
+    }
+
     return (
         <div>
             <Image image={photoURL} />
-            {photoURL}
             
             <div className="slider">
                 <h2>Change Split</h2>
