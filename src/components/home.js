@@ -7,6 +7,7 @@ export default function Home() {
     const [height, _set_height] = useState("");
     const [width, _set_width] = useState("");
     const [startY, _set_startY] = useState();
+    const [touchMove, _set_touchMove] = useState();
     let [count, set_count] = useState(0);
 
     // Refs
@@ -14,6 +15,7 @@ export default function Home() {
     const heightRef = useRef(height);
     const widthRef = useRef(width);
     const startYRef = useRef(startY);
+    const touchMoveRef = useRef(touchMove);
 
     // Update split ref 
     const set_split = data => {
@@ -39,6 +41,12 @@ export default function Home() {
         _set_startY(data);
     }
 
+    // Update touchMove ref
+    const set_touchMove = data => {
+        touchMoveRef.current = data;
+        _set_touchMove(data);
+    }
+
     useEffect(() => {
         // Get a random photo and store the URL in a useState variable
         set_photoURL(get_photo());
@@ -48,11 +56,18 @@ export default function Home() {
 
         // Add mouse event listeners (for swiping functionality)
         window.addEventListener('mousedown', handleMouseDown)
-        window.addEventListener('mouseup', handleMouseUp )
+        window.addEventListener('mouseup', handleMouseUp)
 
-        // Remove listener
+        // Add touch event listeners (for mobile swipe functionality)
+        window.addEventListener('touchstart', handleMouseDown)
+        window.addEventListener('touchmove', handleTouchMove)
+        window.addEventListener('touchend', handleMouseUp)
+
+        // Remove listeners
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('mousedown', handleKeyDown);
+            window.removeEventListener('mouseup', handleKeyDown);
         };
 
     }, []);
@@ -104,16 +119,28 @@ export default function Home() {
 
     // Event listener for mouse down key
     const handleMouseDown = (event) => {
-        set_startY(event.clientY)
+        set_startY(event.clientY || event.touches[0].clientY)
     }
 
     // Event listener for mouse up key
     const handleMouseUp = (event) => {
-        if (event.clientY < startYRef.current) {
+
+        // If client is using slider, do not consider this a "swipe" gesture
+        if (event.srcElement.name === "slider") return
+
+        if (event.clientY < startYRef.current || touchMoveRef.current < startYRef.current) {
             
             // Get a random photo
             set_photoURL(get_photo());
+
+            // Clear startY ref
+            set_startY(null)
         }
+    }
+
+    // Event listner for touch move
+    const handleTouchMove = (event) => {
+        set_touchMove(event.changedTouches[0].clientY)
     }
 
     return (
@@ -124,6 +151,7 @@ export default function Home() {
                 <h2>Change Split</h2>
                 <p>Place Kitten: {Math.round(100-split*100)}%</p>
                 <input 
+                    name="slider"
                     type="range" 
                     onChange={(e) => set_split((e.target.value)/100)} 
                     value={split*100} 
