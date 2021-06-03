@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import Image from  "../components/image";
+import Slider from "../components/slider";
+import ChangeSize from "../components/change_size"
 
 export default function Home() {
     const [photoURL, set_photoURL] = useState();
@@ -76,8 +78,8 @@ export default function Home() {
     const get_photo = () => {
         const max = 700
         const min = 200 
-        const height = heightRef.current
-        const width = widthRef.current
+        let height = heightRef.current
+        let width = widthRef.current
 
         // Check if height and with (if specified by user) is between 100 and 1000
         if (width && height) {
@@ -86,6 +88,9 @@ export default function Home() {
 
                 set_height("");
                 set_width("");
+                
+                height = null;
+                width = null;
             }
         }
 
@@ -146,46 +151,16 @@ export default function Home() {
     return (
         <div>
             <Image image={photoURL} />
-            
-            <div className="slider">
-                <h2>Change Split</h2>
-                <p>Place Kitten: {Math.round(100-split*100)}%</p>
-                <input 
-                    name="slider"
-                    type="range" 
-                    onChange={(e) => set_split((e.target.value)/100)} 
-                    value={split*100} 
-                    min="0" 
-                    max="100" />
-                <p>Unsplash: {Math.round(split*100)}%</p>
-            </div>
 
-            <div className="change_size">
-                <h2>Change Size</h2>
-                <label>
-                    Height (px):
-                    <input 
-                        type="number" 
-                        name="height" 
-                        placeholder="Enter a height" 
-                        value={height} 
-                        min="100"
-                        max="1000"
-                        onChange={(e) => set_height(e.target.value)} />
-                </label>
+            <Slider 
+                split={split} 
+                set_split={set_split} />
 
-                <label>
-                    Width (px):
-                    <input 
-                        type="number" 
-                        name="width" 
-                        placeholder="Enter a width" 
-                        value={width} 
-                        min="100"
-                        max="1000"
-                        onChange={(e) => set_width(e.target.value)} />
-                </label>
-            </div>
+            <ChangeSize 
+                height={height}
+                set_height={set_height}
+                width={width}
+                set_width={set_width} />
         </div>
     )
 }
