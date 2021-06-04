@@ -13,6 +13,8 @@ export default function Home() {
     const [startY, _set_startY] = useState();
     const [touchMove, _set_touchMove] = useState();
     let [count, set_count] = useState(0);
+    const placeKitten_url = "https://placekitten.com";
+    const unsplash_url = "https://source.unsplash.com/random";
 
     // Refs
     const splitRef = useRef(split);
@@ -72,6 +74,9 @@ export default function Home() {
             window.removeEventListener('keydown', handleKeyDown);
             window.removeEventListener('mousedown', handleKeyDown);
             window.removeEventListener('mouseup', handleKeyDown);
+            window.removeEventListener('touchstart', handleKeyDown);
+            window.removeEventListener('touchmove', handleKeyDown);
+            window.removeEventListener('touchend', handleKeyDown);
         };
 
     }, []);
@@ -82,8 +87,10 @@ export default function Home() {
         const min = 200 
         let height = heightRef.current
         let width = widthRef.current
+        let placeKitten_photoSize = `${Math.round(Math.random() * (max - min) + min)}/${Math.round(Math.random() * (max - min) + min)}`
+        let unsplash_photoSize = "";
 
-        // Check if height and with (if specified by user) is between 100 and 1000
+        // Check if height and with (if specified by user) is between max and min
         if (width && height) {
             if ((width < min || width > max) || (height < min || height > max)) {
                 alert(`Width and Height must be between ${min} and ${max} pixels.`)
@@ -94,24 +101,18 @@ export default function Home() {
                 height = null;
                 width = null;
             }
+            placeKitten_photoSize = `${width}/${height}`
+            unsplash_photoSize=`${width}x${height}`
         }
 
         // Get a random num 
         const rand_num = Math.random()
 
-        if (rand_num > splitRef.current) {
-            if (height && width) {
-                return `https://placekitten.com/${width}/${height}`;
-            }
-            return `https://placekitten.com/${Math.round(Math.random() * (max - min) + min)}/${Math.round(Math.random() * (max - min) + min)}`
-        }
+        if (rand_num > splitRef.current) 
+            return `${placeKitten_url}/${placeKitten_photoSize}`
         else {
             set_count(count++)
-
-            if (height && width) {
-                return `https://source.unsplash.com/random/${width}x${height}?${count}`;
-            }
-            return `https://source.unsplash.com/random?${count}`;
+            return `${unsplash_url}/${unsplash_photoSize}?${count}`;
         }
     }
 
@@ -127,7 +128,6 @@ export default function Home() {
     // Event listener for mouse down key
     const handleMouseDown = (event) => {
         set_startY(event.clientY || event.touches[0].clientY)
-        console.log(event.clientY)
     }
 
     // Event listener for mouse up key
@@ -136,6 +136,7 @@ export default function Home() {
         // If client is using slider, do not consider this a "swipe" gesture
         if (event.srcElement.name === "slider") return
 
+        // If client swipes up, get a random photo
         if (event.clientY < startYRef.current || touchMoveRef.current < startYRef.current) {
             
             // Get a random photo
@@ -153,7 +154,9 @@ export default function Home() {
     }
 
     return (
-        <Content>
+        <Content
+            onKeyDown={handleKeyDown}
+        >
             <TikTok_logo src={tikTok_logo}></TikTok_logo>
             
             <Image image={photoURL} />
