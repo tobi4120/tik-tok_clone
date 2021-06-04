@@ -2,6 +2,35 @@ import { useEffect, useState, useRef } from "react";
 import Image from  "../components/image";
 import Slider from "../components/slider";
 import ChangeSize from "../components/change_size"
+import styled from 'styled-components';
+import tikTok_logo from "../assets/tik-tok-logo.png"
+
+// Styles
+const TikTok_logo = styled.img`
+    width: 120px;
+    padding: 10px 20px;
+`;
+
+const Content = styled.div`
+    padding: 15px;
+    
+    @media (max-width: 420px) {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+`;
+
+const Options = styled.div`
+    display: flex;
+    gap: 20px;
+    margin: auto;
+    justify-content: center;
+
+    @media (max-width: 1100px) {
+        display: block;
+    }
+`;
 
 export default function Home() {
     const [photoURL, set_photoURL] = useState();
@@ -76,15 +105,15 @@ export default function Home() {
 
     // Function to get a random photo
     const get_photo = () => {
-        const max = 700
+        const max = 400
         const min = 200 
         let height = heightRef.current
         let width = widthRef.current
 
         // Check if height and with (if specified by user) is between 100 and 1000
         if (width && height) {
-            if ((width < 100 || width > 1000) || (height < 100 || height > 1000)) {
-                alert("Width and Height must be between 100 and 1000 pixels.")
+            if ((width < min || width > max) || (height < min || height > max)) {
+                alert(`Width and Height must be between ${min} and ${max} pixels.`)
 
                 set_height("");
                 set_width("");
@@ -125,11 +154,12 @@ export default function Home() {
     // Event listener for mouse down key
     const handleMouseDown = (event) => {
         set_startY(event.clientY || event.touches[0].clientY)
+        console.log(event.clientY)
     }
 
     // Event listener for mouse up key
     const handleMouseUp = (event) => {
-
+    
         // If client is using slider, do not consider this a "swipe" gesture
         if (event.srcElement.name === "slider") return
 
@@ -138,8 +168,9 @@ export default function Home() {
             // Get a random photo
             set_photoURL(get_photo());
 
-            // Clear startY ref
-            set_startY(null)
+            // Clear refs
+            set_startY()
+            set_touchMove()
         }
     }
 
@@ -149,18 +180,22 @@ export default function Home() {
     }
 
     return (
-        <div>
+        <Content>
+            <TikTok_logo src={tikTok_logo}></TikTok_logo>
+            
             <Image image={photoURL} />
+            
+            <Options>
+                <Slider 
+                    split={split} 
+                    set_split={set_split} />
 
-            <Slider 
-                split={split} 
-                set_split={set_split} />
-
-            <ChangeSize 
-                height={height}
-                set_height={set_height}
-                width={width}
-                set_width={set_width} />
-        </div>
+                <ChangeSize 
+                    height={height}
+                    set_height={set_height}
+                    width={width}
+                    set_width={set_width} />
+            </Options>
+        </Content>
     )
 }
