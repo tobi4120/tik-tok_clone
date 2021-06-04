@@ -1,41 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import Image from  "../components/image";
 import Slider from "../components/slider";
-import ChangeSize from "../components/change_size"
-import styled from 'styled-components';
-import tikTok_logo from "../assets/tik-tok-logo.png"
-
-// Styles
-const TikTok_logo = styled.img`
-    width: 120px;
-    padding: 10px 20px;
-`;
-
-const Content = styled.div`
-    padding: 15px;
-
-    @media (max-width: 420px) {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-`;
-
-const Options = styled.div`
-    display: flex;
-    margin: auto;
-    justify-content: center;
-
-    @media (min-width: 1100px) {
-        div:first-child {
-            margin-right: 20px;
-        }
-    }
-
-    @media (max-width: 1100px) {
-        display: block;
-    }
-`;
+import ChangeSize from "../components/change_size";
+import tikTok_logo from "../assets/tik-tok-logo.png";
+import { TikTok_logo, Content, Options } from "../styles/home";
 
 export default function Home() {
     const [photoURL, set_photoURL] = useState();
