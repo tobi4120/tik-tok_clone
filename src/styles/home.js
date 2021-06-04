@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const TikTok_logo = styled.img`
     width: 120px;
+    height: 35px;
     padding: 10px 20px;
 `;
 

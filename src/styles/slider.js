@@ -54,7 +54,7 @@ export const Name = styled.p `
 
     @media (max-width: 620px) {
         &::after {
-            content: "";
+            content: ${props => props.placeKitten ? `"PK"`: `"U"`};
         }
     }
 `;
