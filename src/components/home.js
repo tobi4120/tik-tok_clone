@@ -13,7 +13,7 @@ const TikTok_logo = styled.img`
 
 const Content = styled.div`
     padding: 15px;
-    
+
     @media (max-width: 420px) {
         display: flex;
         flex-wrap: wrap;
@@ -23,9 +23,14 @@ const Content = styled.div`
 
 const Options = styled.div`
     display: flex;
-    gap: 20px;
     margin: auto;
     justify-content: center;
+
+    @media (min-width: 1100px) {
+        div:first-child {
+            margin-right: 20px;
+        }
+    }
 
     @media (max-width: 1100px) {
         display: block;

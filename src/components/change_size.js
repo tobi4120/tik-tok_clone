@@ -33,7 +33,7 @@ const ChangeSizeDiv = styled.div`
     }
 `;
 
-const Header = styled.h2`
+export const Header = styled.h2`
     color: rgba(254, 44, 85, 1.0);
     margin-top: 10px;
 `

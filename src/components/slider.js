@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Header } from './change_size';
 
 // Styles
 const ChangeSplit = styled.div` 
@@ -21,11 +22,6 @@ const ChangeSplit = styled.div`
         width: 80%;
     }
 `;
-
-const Header = styled.h2 `
-    color: rgba(254, 44, 85, 1.0);
-    margin-top: 10px;
-`
 
 const SplitInput = styled.div`
     display: flex;
