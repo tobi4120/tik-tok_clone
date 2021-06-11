@@ -90,7 +90,7 @@ export default function Home() {
         let placeKitten_photoSize = `${Math.round(Math.random() * (max - min) + min)}/${Math.round(Math.random() * (max - min) + min)}`
         let unsplash_photoSize = "";
 
-        // Check if height and with (if specified by user) is between max and min
+        // Check if height and width (if specified by user) is between max and min
         if (width && height) {
             if ((width < min || width > max) || (height < min || height > max)) {
                 alert(`Width and Height must be between ${min} and ${max} pixels.`)
@@ -154,9 +154,7 @@ export default function Home() {
     }
 
     return (
-        <Content
-            onKeyDown={handleKeyDown}
-        >
+        <Content>
             <TikTok_logo src={tikTok_logo}></TikTok_logo>
             
             <Image image={photoURL} />
